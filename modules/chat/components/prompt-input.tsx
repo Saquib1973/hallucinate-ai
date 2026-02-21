@@ -1,14 +1,18 @@
 "use client";
 
 import { useAiModels } from '@/modules/ai-agent/hook/ai-agent';
-import { ArrowUp } from 'lucide-react';
+import { ArrowUp, Loader } from 'lucide-react';
 import React, { useState } from 'react';
+import { useCreateChat } from '../hooks/chat';
 import ModelSelector from './model-selector';
 
 export const PromptInput = () => {
     const [selectedModelId, setSelectedModelId] = useState<string>('');
+    const [message, setMessage] = useState("")
 
     const { data: models = [], isLoading, isFetching, refetch } = useAiModels();
+
+    const { mutateAsync, isPending: isChatPending } = useCreateChat();
 
     // Set default model once loaded
     React.useEffect(() => {
@@ -18,6 +22,24 @@ export const PromptInput = () => {
     }, [models, selectedModelId]);
 
     const activeModel = models.find((m: any) => m.id === selectedModelId);
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+
+        try {
+            await mutateAsync({
+                model: selectedModelId,
+                content: message,
+            });
+
+        } catch (error) {
+            console.error("Error creating chat", error)
+        } finally {
+            setMessage("")
+        }
+
+
+    }
 
     return (
         <div className="w-full max-w-4xl mx-auto max-md:p-4 mt-auto">
@@ -29,9 +51,14 @@ export const PromptInput = () => {
                             placeholder="What's in your mind or clipboard?"
                             className="w-full bg-transparent border-none outline-none resize-none pt-3 px-4 text-gray-800 placeholder:text-gray-400 min-h-[50px] overflow-hidden leading-relaxed"
                             rows={1}
+                            value={message}
+                            onChange={(e) => setMessage(e.target.value)}
                         />
-                        <button className="bg-black cursor-pointer text-white rounded-full p-2 absolute right-2 top-2">
-                            <ArrowUp className="size-4 rotate-45 text-white" strokeWidth={3} />
+                        <button onClick={handleSubmit} className="bg-black cursor-pointer text-white rounded-full p-2 absolute right-2 top-2">
+                            {
+                                isChatPending ? <Loader className="size-4 animate-spin" /> :
+                                    <ArrowUp className="size-4 rotate-45 text-white" strokeWidth={3} />
+                            }
                         </button>
                     </div>
 
