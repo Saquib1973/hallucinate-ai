@@ -6,9 +6,19 @@ import React, { useState } from 'react';
 import { useCreateChat } from '../hooks/chat';
 import ModelSelector from './model-selector';
 
-export const PromptInput = () => {
+export const PromptInput = ({
+    input,
+    handleInputChange,
+    onSubmit,
+    isLoading: externalIsLoading
+}: {
+    input?: string;
+    handleInputChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+    onSubmit?: (e: React.FormEvent, model: string, content: string) => void;
+    isLoading?: boolean;
+} = {}) => {
     const [selectedModelId, setSelectedModelId] = useState<string>('');
-    const [message, setMessage] = useState("")
+    const [internalMessage, setInternalMessage] = useState("")
 
     const { data: models = [], isLoading, isFetching, refetch } = useAiModels();
 
@@ -23,8 +33,17 @@ export const PromptInput = () => {
 
     const activeModel = models.find((m: any) => m.id === selectedModelId);
 
+    const message = input !== undefined ? input : internalMessage;
+    const isPending = externalIsLoading || isChatPending;
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        if (onSubmit) {
+            onSubmit(e, selectedModelId, message);
+            if (!handleInputChange) setInternalMessage("");
+            return;
+        }
 
         try {
             await mutateAsync({
@@ -35,7 +54,7 @@ export const PromptInput = () => {
         } catch (error) {
             console.error("Error creating chat", error)
         } finally {
-            setMessage("")
+            setInternalMessage("")
         }
 
 
@@ -52,11 +71,17 @@ export const PromptInput = () => {
                             className="w-full bg-transparent border-none outline-none resize-none pt-3 px-4 text-gray-800 placeholder:text-gray-400 min-h-[50px] overflow-hidden leading-relaxed"
                             rows={1}
                             value={message}
-                            onChange={(e) => setMessage(e.target.value)}
+                            onChange={(e) => {
+                                if (handleInputChange) {
+                                    handleInputChange(e);
+                                } else {
+                                    setInternalMessage(e.target.value);
+                                }
+                            }}
                         />
-                        <button onClick={handleSubmit} className="bg-black cursor-pointer text-white rounded-full p-2 absolute right-2 top-2">
+                        <button onClick={handleSubmit} disabled={isPending || !message.trim()} className="disabled:opacity-50 disabled:cursor-not-allowed bg-black cursor-pointer text-white rounded-full p-2 absolute right-2 top-2">
                             {
-                                isChatPending ? <Loader className="size-4 animate-spin" /> :
+                                isPending ? <Loader className="size-4 animate-spin" /> :
                                     <ArrowUp className="size-4 rotate-45 text-white" strokeWidth={3} />
                             }
                         </button>

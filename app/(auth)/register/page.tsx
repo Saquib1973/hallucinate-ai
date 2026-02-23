@@ -1,7 +1,8 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import AnimatePageWrapper from "@/components/animate-page-wrapper";
+import { Button } from "@/components/custom/button";
+import { Input } from "@/components/custom/input";
 import { signIn } from "@/lib/auth-client";
 import Image from "next/image";
 import Link from "next/link";
@@ -28,9 +29,9 @@ const RegisterContent = () => {
         })
     }
     return (
-        <div className="flex min-h-screen items-center justify-center bg-white px-4 font-sans text-gray-900">
+        <AnimatePageWrapper className="flex py-10 md:min-h-screen items-center justify-center font-sans px-4">
             <div
-                className="w-full max-w-[420px]"
+                className="w-full max-w-md"
             >
                 <div className="flex flex-col items-center text-center mb-10">
                     <h1 className="text-[32px] font-medium tracking-tight text-gray-900 mb-2">
@@ -94,7 +95,7 @@ const RegisterContent = () => {
                     </Link>
                 </div>
             </div>
-        </div>
+        </AnimatePageWrapper>
     );
 };
 

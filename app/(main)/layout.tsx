@@ -28,7 +28,7 @@ const ChatLayout = async ({ children }: { children: React.ReactNode }) => {
         <UserProvider initialUser={formattedUser}>
             <div className="flex h-screen bg-white w-full overflow-hidden font-sans">
                 <Sidebar chats={chats} />
-                <main className="flex-1 flex flex-col min-w-0 z-10 overflow-hidden md:my-2 md:mr-2 border-t md:border border-gray-100/50 pt-14 md:pt-0 md:pb-6">
+                <main className="flex-1 flex flex-col z-10 overflow-hidden">
                     {children}
                 </main>
             </div>

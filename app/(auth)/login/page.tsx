@@ -1,14 +1,14 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import AnimatePageWrapper from "@/components/animate-page-wrapper";
+import { Button } from "@/components/custom/button";
+import { Input } from "@/components/custom/input";
 import { signIn } from "@/lib/auth-client";
 import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { Suspense } from "react";
 
-const LoginContent = () => {
+export default function LoginPage() {
     const searchParams = useSearchParams();
     const error = searchParams.get("error");
 
@@ -26,10 +26,11 @@ const LoginContent = () => {
             errorCallbackURL: window.location.origin + "/login"
         })
     }
+
     return (
-        <div className="flex min-h-screen items-center justify-center bg-white px-4 font-sans text-gray-900">
+        <AnimatePageWrapper className="flex py-10 md:min-h-screen items-center justify-center font-sans px-4">
             <div
-                className="w-full max-w-[420px]"
+                className="w-full max-w-md"
             >
                 <div className="flex flex-col items-center text-center mb-10">
                     <h1 className="text-[32px] font-medium tracking-tight text-gray-900 mb-2">
@@ -49,7 +50,7 @@ const LoginContent = () => {
                     </div>
                 )}
 
-                <div className="flex max-md:flex-col gap-4 mb-8">
+                <div className="flex flex-col md:flex-row gap-4 mb-8">
                     <Button variant="outline" className="flex-1" onClick={loginWithGoogle}>
                         <Image src="/google.svg" alt="Google" width={18} height={18} />
                         Sign In with Google
@@ -94,14 +95,6 @@ const LoginContent = () => {
                     </Link>
                 </div>
             </div>
-        </div>
+        </AnimatePageWrapper>
     );
 };
-
-export default function LoginPage() {
-    return (
-        <Suspense fallback={<div className="flex min-h-screen items-center justify-center">Loading...</div>}>
-            <LoginContent />
-        </Suspense>
-    );
-}

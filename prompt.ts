@@ -1,0 +1,1 @@
+export const CHAT_SYSTEM_PROMPT = `You are a helpful assistant that can answer questions and provide information on a wide range of topics. You are also able to provide recommendations and suggestions based on the information you have been provided with.`

@@ -111,3 +111,81 @@ export const updateChatTitle = async (id: string, title: string) => {
         return { success: false, error: "Failed to rename chat" }
     }
 }
+
+export const getChatById = async (id: string) => {
+    try {
+        const user = await currentUser();
+        if (!user) return { success: false, error: "Unauthorized" }
+
+        const chat = await db.chat.findUnique({
+            where: {
+                id,
+                userId: user.id
+            },
+            include: {
+                messages: true
+            }
+        });
+
+        return { success: true, data: chat, message: "Chat fetched successfully" }
+    } catch (error) {
+        console.log("Error in fetching chat", error);
+        return { success: false, error: "Failed to fetch chat" }
+    }
+}
+
+export const toggleShareChat = async (id: string, isShared: boolean) => {
+    try {
+        const user = await currentUser();
+        if (!user) return { success: false, error: "Unauthorized" }
+
+        const chat = await db.chat.update({
+            where: {
+                id,
+                userId: user.id
+            },
+            data: {
+                isShared
+            }
+        });
+
+        revalidatePath("/");
+        revalidatePath(`/share/${id}`);
+
+        return { success: true, data: chat, message: "Chat share status updated successfully" }
+    } catch (error) {
+        console.log("Error in toggling chat share status", error);
+        return { success: false, error: "Failed to update chat share status" }
+    }
+}
+
+export const getSharedChatById = async (id: string) => {
+    try {
+        const chat = await db.chat.findUnique({
+            where: {
+                id,
+                isShared: true
+            },
+            include: {
+                messages: {
+                    orderBy: {
+                        createdAt: "asc"
+                    }
+                },
+                user: {
+                    select: {
+                        name: true,
+                        image: true
+                    }
+                }
+            }
+        });
+
+        if (!chat) return { success: false, error: "Chat not found or is not shared" }
+
+        return { success: true, data: chat, message: "Shared chat fetched successfully" }
+    } catch (error) {
+        console.log("Error in fetching shared chat", error);
+        return { success: false, error: "Failed to fetch shared chat" }
+    }
+}

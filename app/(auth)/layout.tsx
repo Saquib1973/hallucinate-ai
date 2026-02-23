@@ -8,7 +8,7 @@ const AuthLayout = async ({ children }: { children: React.ReactNode }) => {
         headers: await headers(),
     });
     if (session?.user) {
-        return redirect('/chat');
+        return redirect('/');
     }
     return (
         <div>{children}</div>
