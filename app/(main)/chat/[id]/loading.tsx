@@ -1,8 +1,9 @@
 import { Loader } from 'lucide-react';
+import AnimatePageWrapper from '@/components/animate-page-wrapper';
 
 const Loading = () => {
     return (
-        <div className="flex flex-col h-full relative">
+        <AnimatePageWrapper duration={0.4} className="flex flex-col h-full relative">
             <div className="flex-1 h-full overflow-y-auto px-8 pt-20 pb-48 scrollbar-hide">
                 <div className="max-w-4xl px-4 mx-auto text-gray-400 flex flex-col items-center justify-center gap-6">
                     <Loader className='animate-pulse size-5 animate-spin' />
@@ -31,7 +32,7 @@ const Loading = () => {
                     </div>
                 </div>
             </div>
-        </div>
+        </AnimatePageWrapper>
     );
 };
 

@@ -10,7 +10,8 @@ const ModelSelector = ({
     onModelSelect,
     isLoadingModel,
     refetch,
-    className = ""
+    className = "",
+    icon
 
 }: {
     models: any[];
@@ -19,6 +20,7 @@ const ModelSelector = ({
     isLoadingModel: any;
     className?: string;
     refetch: () => void;
+    icon?: React.ReactNode;
 }) => {
 
     const [isOpen, setIsOpen] = useState(false);
@@ -81,7 +83,8 @@ const ModelSelector = ({
                     ${isOpen ? 'border-gray-200 bg-gray-100' : ''}
                     `}
             >
-                <span className="text-xs font-medium truncate max-w-[150px]">
+                {icon && <span className="flex items-center justify-center">{icon}</span>}
+                <span className="text-xs font-medium truncate max-w-[100px] md:max-w-[150px]">
                     {selectedModel?.name || "Select Model"}
                 </span>
                 <ChevronDown className={`w-4 h-4 text-gray-500 transition-transform ${isOpen ? 'rotate-180' : ''} shrink-0`} />
@@ -96,7 +99,7 @@ const ModelSelector = ({
                             animate={{ y: 0, scale: 1 }}
                             exit={{ y: 10, scale: 0.95, transition: { duration: 0.05 } }}
                             transition={{ duration: 0.10, ease: "easeOut" }}
-                            className="fixed inset-x-0 bottom-0 z-[50] w-full bg-gray-50 md:bg-white border-gray-100 max-md:border-t border rounded-t-3xl flex flex-col md:h-[350px] h-[80vh] pb-6 md:pb-0 md:absolute md:bottom-full md:left-0 md:inset-x-auto md:w-80 md:mb-2 md:rounded-2xl md:shadow-sm md:overflow-hidden md:origin-bottom-left origin-bottom"
+                            className="fixed inset-x-0 bottom-0 z-50 w-full bg-gray-50 md:bg-white border-gray-100 max-md:border-t border rounded-t-3xl flex flex-col md:h-[350px] h-[80vh] pb-6 md:pb-0 md:absolute md:bottom-full md:left-0 md:inset-x-auto md:w-80 md:mb-2 md:rounded-2xl md:shadow-sm md:overflow-hidden md:origin-bottom-left origin-bottom"
                         >
                             {/* Drag handle for mobile */}
                             <div className="w-full flex justify-center py-3 md:hidden shrink-0" onClick={() => setIsOpen(false)}>

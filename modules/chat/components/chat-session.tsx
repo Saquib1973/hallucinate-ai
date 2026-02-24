@@ -10,6 +10,7 @@ import { ShareDialog } from './share-dialog';
 import { Button } from '@/components/ui/button';
 import { Share } from 'lucide-react';
 import { useState } from 'react';
+import AnimatePageWrapper from '@/components/animate-page-wrapper';
 
 interface ChatSessionProps {
     chatId: string;
@@ -83,8 +84,8 @@ export const ChatSession = ({ chatId, initialMessages, autoTrigger, initialModel
     }
 
     return (
-        <div className="flex flex-col h-full relative">
-            <div className="flex-1 h-full overflow-y-auto pb-48 scrollbar-hide">
+        <AnimatePageWrapper className="flex flex-col h-full relative">
+            <div className="flex-1 h-full overflow-y-auto scrollbar-hide">
                 <div className="h-14 max-md:hidden inset-0 flex items-center justify-between px-6 sticky top-0 z-30">
                     <h2 className="text-sm font-semibold text-gray-800">Chat Session #{chatId.slice(-6)}</h2>
                     <Button variant="ghost" size="sm" className="rounded-full gap-2" onClick={() => setIsShareOpen(true)}>
@@ -92,7 +93,7 @@ export const ChatSession = ({ chatId, initialMessages, autoTrigger, initialModel
                         Share
                     </Button>
                 </div>
-                <div className="max-w-4xl px-4 py-6 mx-auto flex flex-col gap-6">
+                <div className="max-w-4xl px-4 py-6 pb-48 mx-auto flex flex-col gap-6">
                     {messages.map((msg) => {
                         let contentToRender = "";
                         if (msg.role === 'user') {
@@ -156,6 +157,6 @@ export const ChatSession = ({ chatId, initialMessages, autoTrigger, initialModel
                 chatId={chatId}
                 isSharedInitial={isSharedInitial}
             />
-        </div>
+        </AnimatePageWrapper>
     );
 };
