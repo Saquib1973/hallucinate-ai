@@ -32,15 +32,6 @@ const ChatHomePage = () => {
 
                 {/* Header Section */}
                 <div className="flex flex-col items-center text-center w-full max-w-3xl mx-auto mb-10 relative">
-                    {/* Floating Robot Image Placeholder */}
-                    <div className="absolute -top-16 -right-4 md:-right-12 z-20 hidden md:block animate-bounce pointer-events-none" style={{ animationDuration: '3s' }}>
-                        <div className="w-24 h-24 bg-gray-100 rounded-3xl rotate-12 flex items-center justify-center shadow-lg border border-gray-200">
-                            <div className="flex gap-2">
-                                <div className="w-4 h-2 bg-green-400 rounded-full" />
-                                <div className="w-4 h-2 bg-green-400 rounded-full" />
-                            </div>
-                        </div>
-                    </div>
 
                     <h1 className="text-4xl md:text-[44px] leading-tight font-medium text-gray-900 tracking-tight">
                         Turn your <span className="font-semibold">ideas</span> into <span className="font-semibold">interfaces</span>

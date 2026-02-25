@@ -1,38 +1,35 @@
-import { getChatById } from '@/modules/chat/actions';
+"use client";
+
+import ChatLoading from '@/modules/chat/components/chat-loading';
 import { ChatSession } from '@/modules/chat/components/chat-session';
+import { useChatId } from '@/modules/chat/hooks/chat';
+import { use } from 'react';
+import { parseMessageContent } from '@/modules/chat/lib/utils';
 
 interface ChatPageProps {
     params: Promise<{ id: string }>;
     searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
-const ChatPage = async ({ params, searchParams }: ChatPageProps) => {
-    const resolvedParams = await params;
-    const resolvedSearchParams = searchParams ? await searchParams : {};
+const ChatPage = ({ params, searchParams }: ChatPageProps) => {
+    const resolvedParams = use(params);
+    const resolvedSearchParams = searchParams ? use(searchParams) : {};
     const autoTrigger = resolvedSearchParams.autoTrigger === 'true';
 
-    const chatRes = await getChatById(resolvedParams.id);
+    const { data: chatRes, isLoading } = useChatId(resolvedParams.id);
 
-    if (!chatRes.success || !chatRes.data) {
+    if (isLoading) return <ChatLoading />
+
+    if (!chatRes?.success || !chatRes?.data) {
         return <div className="flex h-full items-center justify-center text-gray-500">Chat not found</div>;
     }
 
     const dbMessages = chatRes.data.messages || [];
-    const initialMessages = dbMessages.map((msg: any) => {
-        let textContent = msg.content;
-        try {
-            const parts = JSON.parse(msg.content);
-            if (Array.isArray(parts)) {
-                textContent = parts.filter((p: any) => p.type === 'text').map((p: any) => p.text).join('\n');
-            }
-        } catch (e) { }
-
-        return {
-            id: msg.id,
-            role: msg.messageRole.toLowerCase(),
-            content: textContent,
-        }
-    });
+    const initialMessages = dbMessages.map((msg: any) => ({
+        id: msg.id,
+        role: msg.messageRole.toLowerCase(),
+        content: parseMessageContent(msg.content),
+    }));
 
     return <ChatSession chatId={resolvedParams.id} initialMessages={initialMessages} autoTrigger={autoTrigger} initialModel={chatRes.data.model} isSharedInitial={chatRes.data.isShared} />;
 };

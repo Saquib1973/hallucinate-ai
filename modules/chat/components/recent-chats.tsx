@@ -7,12 +7,14 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { useDeleteChat, useUpdateChatTitle } from '../hooks/chat';
+import { useDeleteChat, useRenameChatTitle } from '../hooks/chat';
 import { useChatStore } from '../store/chat-store';
 import { ShareDialog } from './share-dialog';
 
 export const RecentChats = ({ initialChats }: { initialChats?: any }) => {
     const { chats, loading } = useChatStore();
+    const updateChatTitleMutation = useRenameChatTitle();
+    const deleteChatMutation = useDeleteChat();
     const pathname = usePathname();
     const router = useRouter();
 
@@ -27,8 +29,7 @@ export const RecentChats = ({ initialChats }: { initialChats?: any }) => {
         setMounted(true);
     }, []);
 
-    const deleteChatMutation = useDeleteChat(chatToDelete?.id || "");
-    const updateChatTitleMutation = useUpdateChatTitle(renamingChatId || "", renameValue);
+
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -46,7 +47,7 @@ export const RecentChats = ({ initialChats }: { initialChats?: any }) => {
 
     const handleDelete = () => {
         if (!chatToDelete) return;
-        deleteChatMutation.mutate(undefined, {
+        deleteChatMutation.mutate({ chatId: chatToDelete.id }, {
             onSuccess: () => {
                 if (pathname === `/chat/${chatToDelete.id}`) {
                     router.push("/");
@@ -62,7 +63,7 @@ export const RecentChats = ({ initialChats }: { initialChats?: any }) => {
             setRenamingChatId(null);
             return;
         }
-        updateChatTitleMutation.mutate(undefined, {
+        updateChatTitleMutation.mutate({ chatId: renamingChatId || "", title: renameValue.trim() }, {
             onSuccess: () => {
                 setRenamingChatId(null);
             }

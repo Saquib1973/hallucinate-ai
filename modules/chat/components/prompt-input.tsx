@@ -2,7 +2,7 @@
 
 import { useAiModels } from '@/modules/ai-agent/hook/ai-agent';
 import { motion } from 'framer-motion';
-import { AudioLines, ChevronDown, Lightbulb, Loader, Paperclip, Sparkles } from 'lucide-react';
+import { AudioLines, Loader, Paperclip, Sparkles } from 'lucide-react';
 import React, { useState } from 'react';
 import { useCreateChat } from '../hooks/chat';
 import ModelSelector from './model-selector';
@@ -96,16 +96,6 @@ export const PromptInput = ({
                                 <Paperclip className="size-4" strokeWidth={2.5} />
                             </button>
 
-                            <button type="button" className="flex items-center gap-1.5 px-3 py-2 rounded-full border border-gray-200 bg-white hover:bg-gray-50 text-[13px] font-medium text-gray-700 transition-colors shrink-0">
-                                <Paperclip className="size-3.5" />
-                                Design Style
-                                <ChevronDown className="size-3.5 text-gray-400" />
-                            </button>
-
-                            <button type="button" className="flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-[#E5F0FF] text-[#0066FF] text-[13px] font-medium transition-colors shrink-0">
-                                <Lightbulb className="size-3.5" />
-                                Ideas
-                            </button>
                         </div>
 
                         {/* Right side actions */}

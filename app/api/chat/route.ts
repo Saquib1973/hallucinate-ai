@@ -9,33 +9,6 @@ const provider = createOpenRouter({
     apiKey: process.env.OPENROUTER_API_KEY
 })
 
-const convertStoreMessageToUI = (msg: any) => {
-    try {
-        const parts = JSON.parse(msg.content);
-        const validParts = parts.filter((part: any) => part.type === "text");
-        if (validParts.length === 0) return null;
-        return {
-            id: msg.id,
-            role: msg.messageRole.toLowerCase(),
-            parts: validParts,
-            createdAt: msg.createdAt,
-        }
-    } catch (error) {
-
-        return {
-            id: msg.id,
-            role: msg.messageRole.toLowerCase(),
-            parts: [{
-                type: "text",
-                text: msg.content
-            }],
-            createdAt: msg.createdAt,
-        }
-
-    }
-
-}
-
 const extractPartsAsJSON = (message: any) => {
     if (message.parts && Array.isArray(message.parts)) {
         return JSON.stringify(message.parts)

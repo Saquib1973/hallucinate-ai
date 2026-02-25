@@ -23,11 +23,11 @@ export const useCreateChat = () => {
 
 }
 
-export const useDeleteChat = (chatId: string) => {
+export const useDeleteChat = () => {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: () => deleteChat(chatId),
+        mutationFn: ({ chatId }: { chatId: string }) => deleteChat(chatId),
         onSuccess: (result) => {
             if (result.success && result.data) {
                 queryClient.invalidateQueries({ queryKey: ['chats'] })
@@ -40,11 +40,10 @@ export const useDeleteChat = (chatId: string) => {
     })
 }
 
-export const useUpdateChatTitle = (chatId: string, title: string) => {
+export const useRenameChatTitle = () => {
     const queryClient = useQueryClient();
-
     return useMutation({
-        mutationFn: () => updateChatTitle(chatId, title),
+        mutationFn: ({ chatId, title }: { chatId: string, title: string }) => updateChatTitle(chatId, title),
         onSuccess: (result) => {
             if (result.success && result.data) {
                 queryClient.invalidateQueries({ queryKey: ['chats'] })
@@ -57,10 +56,9 @@ export const useUpdateChatTitle = (chatId: string, title: string) => {
     })
 }
 
-export const useGetChatById = (chatId: string) => {
-
+export const useChatId = (chatId: string) => {
     return useQuery({
         queryKey: ['chats', chatId],
         queryFn: () => getChatById(chatId),
     })
-} 
+}

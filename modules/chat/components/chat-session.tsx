@@ -11,6 +11,8 @@ import { Button } from '@/components/ui/button';
 import { Share } from 'lucide-react';
 import { useState } from 'react';
 import AnimatePageWrapper from '@/components/animate-page-wrapper';
+import { useChatId } from '../hooks/chat';
+import { getMessageText, preprocessLaTeX } from '../lib/utils';
 
 interface ChatSessionProps {
     chatId: string;
@@ -22,6 +24,7 @@ interface ChatSessionProps {
 
 export const ChatSession = ({ chatId, initialMessages, autoTrigger, initialModel, isSharedInitial = false }: ChatSessionProps) => {
     const [isShareOpen, setIsShareOpen] = useState(false);
+    const { data: chatRes } = useChatId(chatId);
     const hasTriggered = useChatStore(state => state.hasChatBeenTriggered);
     const markTriggered = useChatStore(state => state.markChatAsTriggered);
 
@@ -87,7 +90,7 @@ export const ChatSession = ({ chatId, initialMessages, autoTrigger, initialModel
         <AnimatePageWrapper className="flex flex-col h-full relative">
             <div className="flex-1 h-full overflow-y-auto scrollbar-hide">
                 <div className="h-14 max-md:hidden inset-0 flex items-center justify-between px-6 sticky top-0 z-30">
-                    <h2 className="text-sm font-semibold text-gray-800">Chat Session #{chatId.slice(-6)}</h2>
+                    <h2 className="text-sm font-semibold text-gray-800">{chatRes?.data?.title || `Chat Session #${chatId.slice(-6)}`}</h2>
                     <Button variant="ghost" size="sm" className="rounded-full gap-2" onClick={() => setIsShareOpen(true)}>
                         <Share className="w-4 h-4" />
                         Share
@@ -95,24 +98,10 @@ export const ChatSession = ({ chatId, initialMessages, autoTrigger, initialModel
                 </div>
                 <div className="max-w-4xl px-4 py-6 pb-48 mx-auto flex flex-col gap-6">
                     {messages.map((msg) => {
-                        let contentToRender = "";
-                        if (msg.role === 'user') {
-                            contentToRender = msg.parts ? msg.parts.filter((p: any) => p.type === 'text').map((p: any) => p.text).join('\n') : "";
-                            if (!contentToRender && (msg as any).text) contentToRender = (msg as any).text;
-                        } else {
-                            contentToRender = msg.parts ? msg.parts.filter((p: any) => p.type === 'text').map((p: any) => p.text).join('\n') : "";
-                            if (!contentToRender && (msg as any).text) contentToRender = (msg as any).text;
-                        }
-
-                        // Support mapping from initial db messages where we manually mapped `content` directly
-                        if (!contentToRender && (msg as any).content) contentToRender = (msg as any).content;
+                        let contentToRender = getMessageText(msg);
 
                         // Pre-process LLM's LaTeX delimiters (\[ \], \( \)) into standard Markdown standard ($$, $) for remark-math
-                        contentToRender = contentToRender
-                            .replace(/\\\[/g, '$$$$')
-                            .replace(/\\\]/g, '$$$$')
-                            .replace(/\\\(/g, '$')
-                            .replace(/\\\)/g, '$');
+                        contentToRender = preprocessLaTeX(contentToRender);
 
                         return (
                             <React.Fragment key={msg.id}>
